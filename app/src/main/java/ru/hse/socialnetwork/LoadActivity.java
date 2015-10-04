@@ -8,7 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 public class LoadActivity extends AppCompatActivity {
-
+    public static final int REQUEST_DISCOVERABLE_CODE = 1;
     BluetoothAdapter bluetooth;
 
     @Override
@@ -19,78 +19,37 @@ public class LoadActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
         // Подключаем Блютуз Адаптер и получаем стандартные настройки
         bluetooth = BluetoothAdapter.getDefaultAdapter();
-
-        // Хотим получить статус устройства
-        String status;
-
-        // Если Блютуз включен
-        if (bluetooth.isEnabled()) {
-            ensureDiscoverable();
-            // Получаем MAC-адрес моего устройства
-            String mydeviceaddress = bluetooth.getAddress();
-            // Получаем текущее имя моего устройства
-            String mydevicename = bluetooth.getName();
-            // Заполняем статус
-            status = mydevicename + " : " + mydeviceaddress;
-        } else {
-            // Включаем Блютуз
-            bluetooth.enable();
-            ensureDiscoverable();
-
-            status = "Bluetooth is not Enabled.";
-        }
-
-        // Устанавливаем стандартное имя если нет метки устройства
-        if (bluetooth.getName().contains("@") != true) {
-            bluetooth.setName("@noname");
-        }
-
-        // Расскоментировать для проверки статуса
-
-        //Toast toast = Toast.makeText(getApplicationContext(),status, Toast.LENGTH_LONG);
-        //toast.show();
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {//для красоты
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        }, 3000);
-
+        // Включаем Блютуз
+        if (!bluetooth.isEnabled()) bluetooth.enable();
+        // установка видимости устройства
+        ensureDiscoverable();
     }
 
-    // установка видимости устройства
     private void ensureDiscoverable() {
-        if (bluetooth.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3600);
-            startActivity(discoverableIntent);
-        }
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3600);
+        startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_CODE);
+    }
+
+    //Получение результата с окна
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+            }, 3000);
+        } else finish();
     }
 
     @Override
     public void onRestart() {
         super.onRestart();
-        LoadActivity.this.finish();
+        finish();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        android.os.Process.killProcess(android.os.Process.myPid());
-    }
-
-
 }
