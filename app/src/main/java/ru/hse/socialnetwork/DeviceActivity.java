@@ -50,20 +50,39 @@ public class DeviceActivity extends ListActivity {
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // Create a new device item
-                    newDevice[0] =device.getAddress();//это сделано,чтобы когда-нибудь их проверить,правда ли они совпадают
+                    newDevice[0] = device.getAddress();//это сделано,чтобы когда-нибудь их проверить,правда ли они совпадают
                     //с именами или нет
-                    newDevice[1]=device.getName();
-                    Toast.makeText(getApplicationContext(), device.getName(),Toast.LENGTH_LONG).show();
+                    newDevice[1] = device.getName();
+                    //Toast.makeText(getApplicationContext(), device.getName(),Toast.LENGTH_LONG).show();
+
                 }
 //                выведет мас адресса устройств,которые имеют вкл блютуз поблизости
 //                listOfDevice.add(newDevice[0]);
 //                следующая строка выводит имена устройств с найденными вокруг блютузами
                 listOfDevice.add(newDevice[1]);
 //                Toast.makeText(getApplicationContext(),"lalala"+newDevice[0],Toast.LENGTH_LONG).show();
-                massDevice= new String[listOfDevice.size()];
+
+                // Подсчитываем сколько найденных устройств с меткой
+                int j = 0;
                 for(int i = 0; i < listOfDevice.size(); i++){
-                    massDevice[i] = listOfDevice.get(i);
+                    if(listOfDevice.get(i).startsWith("@")==true)
+                    {
+                        j++;
+                    }
                 }
+
+                //Создаём массив устройст, в которых есть наша метка
+                massDevice= new String[j];
+
+                //Заполняем массив устройств с метками именами реальных устройств
+                int a = 0;
+                for(int i = 0; i < listOfDevice.size(); i++){
+                    if(listOfDevice.get(i).startsWith("@")==true) {
+                        massDevice[a] = listOfDevice.get(i).substring(1);
+                        a++;
+                    }
+                }
+
                 setListAdapter(new MyArrayAdapter(DeviceActivity.this, massDevice));
             }
         };

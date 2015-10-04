@@ -2,32 +2,32 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
-        <dex dex="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\pre-dexed\debug\classes-8b18dce8bf28c4b94b7344ee30b17179c8de1fb4.jar" />
-    </item>
-    <item
-        jar="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\libs\internal_impl-23.0.0.jar"
+        jar="C:\android projects\SocialNetwork\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\libs\internal_impl-23.0.0.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
-        <dex dex="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.0-2e35f681749594e2590a632d2514555a90bb0d5c.jar" />
+        <dex dex="C:\android projects\SocialNetwork\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.0-89b78fec43b07941457bd256066b91b91a340ec8.jar" />
     </item>
     <item
-        jar="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\classes.jar"
+        jar="C:\android projects\SocialNetwork\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
-        <dex dex="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\pre-dexed\debug\classes-01d3d81158716eb28952339ef0a1d9523027b7ab.jar" />
+        <dex dex="C:\android projects\SocialNetwork\app\build\intermediates\pre-dexed\debug\classes-1774ccdfe8b0bc173e667354fda81e06be24bf4e.jar" />
     </item>
     <item
-        jar="C:\Users\shlya_000\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.0\support-annotations-23.0.0.jar"
+        jar="C:\android projects\SocialNetwork\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
+        <dex dex="C:\android projects\SocialNetwork\app\build\intermediates\pre-dexed\debug\classes-a7f1546c5e10b147d82f5b0c11036d7fcdca9863.jar" />
+    </item>
+    <item
+        jar="C:\Users\Илья\AppData\Local\Android\sdk2\extras\android\m2repository\com\android\support\support-annotations\23.0.0\support-annotations-23.0.0.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
-        <dex dex="C:\Users\shlya_000\Desktop\Social_Network\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.0-35e4eee60871e3d84b1ece0f097db9cc7c187ace.jar" />
+        <dex dex="C:\android projects\SocialNetwork\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.0-7d842363495cdc27ece07586b3e28be24ba8e2cc.jar" />
     </item>
 
 </items>

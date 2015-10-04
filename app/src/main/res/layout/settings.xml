@@ -6,7 +6,7 @@
     tools:context="ru.hse.actionbartabs.SettingsActivity">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="242dp">
 
@@ -16,23 +16,38 @@
             android:id="@+id/photoImage"
             android:layout_weight="0.85" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Name"
-            android:textColor="@color/white_color"
-            android:id="@+id/nameText"
-            android:layout_gravity="center" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="242dp">
 
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/nameEdit"
-            android:textColor="@color/white_color"
-            android:layout_weight="1"
-            android:layout_gravity="center" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Name: "
+                android:textColor="@color/white_color"
+                android:id="@+id/nameText"
+                android:layout_gravity="center" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameEdit"
+                android:textColor="@color/white_color"
+                android:layout_weight="1"
+                android:layout_gravity="center" />
+        </LinearLayout>
+
+
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Изменить Имя"
+        android:onClick="changeName"
+        android:id="@+id/buttonName" />
 
     <LinearLayout
         android:orientation="vertical"
