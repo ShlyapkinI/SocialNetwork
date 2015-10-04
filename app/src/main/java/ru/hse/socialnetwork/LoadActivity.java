@@ -23,8 +23,15 @@ public class LoadActivity extends AppCompatActivity {
         bluetooth = BluetoothAdapter.getDefaultAdapter();
         // Включаем Блютуз
         if (!bluetooth.isEnabled()) bluetooth.enable();
+
+        // Устанавливаем стандартное имя если нет метки устройства
+        if (bluetooth.getName().contains("@") != true) {
+            bluetooth.setName("@"+bluetooth.getName());
+        }
+
         // установка видимости устройства
         ensureDiscoverable();
+
     }
 
     private void ensureDiscoverable() {
