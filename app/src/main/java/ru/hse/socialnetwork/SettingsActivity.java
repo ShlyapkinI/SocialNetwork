@@ -1,8 +1,8 @@
 package ru.hse.socialnetwork;
 
 import android.bluetooth.BluetoothAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +13,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     BluetoothAdapter bluetooth;
     EditText  nameEdit;
+    public static final int LABEL = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Подключаем Блютуз Адаптер и получаем стандартные настройки
         bluetooth = BluetoothAdapter.getDefaultAdapter();
+
 
         getSupportActionBar().setTitle("Settings");
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -31,9 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
         nameEdit   = (EditText)findViewById(R.id.nameEdit);
 
         photoImage.setImageResource(R.drawable.ivan);
-
         // Выводим текущее имя устройства, удаляя метку приложения
-        nameEdit.setText(bluetooth.getName().substring(1));
+        nameEdit.setText(bluetooth.getName().substring(LABEL));
     }
 
     // Клик по кнопке "Изменить имя"

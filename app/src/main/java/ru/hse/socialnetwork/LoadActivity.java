@@ -3,7 +3,6 @@ package ru.hse.socialnetwork;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
@@ -25,9 +24,7 @@ public class LoadActivity extends AppCompatActivity {
         if (!bluetooth.isEnabled()) bluetooth.enable();
 
         // Устанавливаем стандартное имя если нет метки устройства
-        if (bluetooth.getName().contains("@") != true) {
-            bluetooth.setName("@"+bluetooth.getName());
-        }
+        if (!bluetooth.getName().contains("@")) bluetooth.setName("@" + bluetooth.getName());
 
         // установка видимости устройства
         ensureDiscoverable();
@@ -44,13 +41,14 @@ public class LoadActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != 0) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                }
-            }, 3000);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+
         } else finish();
     }
 

@@ -7,87 +7,46 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DeviceActivity extends ListActivity {
 
     BluetoothAdapter bluetoothAdapter;
     BroadcastReceiver bReciever;
+    public static final int LABEL = 1;
+
+
+   // ключ мас-адресс, а значение Имя блютуза
+    Map<String,String> discoveredDevices = new HashMap<String, String>();
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-//        выводим список устройст,с которыми мы сопрягались раньше,
-//         не обязательно в этом приложении(которые хранятся в нашем телефоне)
+
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothAdapter.startDiscovery();
-//        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-//        Object[] v = pairedDevices.toArray(new Object[pairedDevices.size()]);
-//        String[] stringArray = new String[v.length];
-//        for (int i=0; i < v.length; i++) {
-//            stringArray[i] = v[i].toString();
-//        }
-        //здесь мы устанавиваем ресивер,он нужен,чтобы мы добавляли в список устройств те,которые онлайн
-        // и с которыми мы не сопрягались
-        //код в ресивере срабатывает как только он нашёл новое устройство поблизости с работающим блютузом
-        final String[] newDevice = new String[2];
-        final List<String> listOfDevice= new ArrayList<>();
+
         bReciever = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context context, Intent intent) {
-                String [] massDevice;
                 String action = intent.getAction();
+
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    // Create a new device item
-                    newDevice[0] =device.getAddress();//это сделано,чтобы когда-нибудь их проверить,правда ли они совпадают
-                    //с именами или нет
-                    newDevice[1]=device.getName();
-                    Toast.makeText(getApplicationContext(), device.getName(),Toast.LENGTH_LONG).show();
-                }
-//                выведет мас адресса устройств,которые имеют вкл блютуз поблизости
-//                listOfDevice.add(newDevice[0]);
-//                следующая строка выводит имена устройств с найденными вокруг блютузами
-                listOfDevice.add(newDevice[1]);
-//                Toast.makeText(getApplicationContext(),"lalala"+newDevice[0],Toast.LENGTH_LONG).show();
-
-                // Подсчитываем сколько найденных устройств с меткой
-                int j = 0;
-                for(int i = 0; i < listOfDevice.size(); i++){
-                    if(listOfDevice.get(i).startsWith("@")==true)
-                    {
-                        j++;
+                    if (!discoveredDevices.containsKey(device.getAddress()) && device.getName().startsWith("@")) {
+                        discoveredDevices.put(device.getAddress(), device.getName().substring(LABEL));
                     }
                 }
-
-                //Создаём массив устройст, в которых есть наша метка
-                massDevice= new String[j];
-
-                //Заполняем массив устройств с метками именами реальных устройств
-                int a = 0;
-                for(int i = 0; i < listOfDevice.size(); i++){
-                    if(listOfDevice.get(i).startsWith("@")==true) {
-                        massDevice[a] = listOfDevice.get(i).substring(1);
-                        a++;
-                    }
-                }
-
-                // Отображаем на экран
-                setListAdapter(new MyArrayAdapter(DeviceActivity.this, massDevice));
+                String[] stockArr=discoveredDevices.values().toArray(new String[discoveredDevices.size()]);
+                setListAdapter(new MyArrayAdapter(DeviceActivity.this, stockArr));
             }
         };
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        //регистрируем наш ресивер
         this.registerReceiver(bReciever, filter);
     }
 
