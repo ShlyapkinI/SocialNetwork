@@ -38,7 +38,8 @@ public class DeviceActivity extends ListActivity {
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if (!discoveredDevices.containsKey(device.getAddress()) && device.getName().startsWith("@")) {
+                    if (!discoveredDevices.containsKey(device.getAddress()) && device.getName().startsWith("@"))
+                    {
                         discoveredDevices.put(device.getAddress(), device.getName().substring(LABEL));
                     }
                 }

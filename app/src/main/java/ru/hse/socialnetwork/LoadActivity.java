@@ -30,11 +30,17 @@ public class LoadActivity extends AppCompatActivity {
         ensureDiscoverable();
 
     }
-
+    // если устройство не видимо, то делаем его видимым при старте
     private void ensureDiscoverable() {
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3600);
-        startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_CODE);
+        //if (bluetooth.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3600);
+            startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_CODE);
+        //}
+        //else {
+        //    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        //    startActivity(intent);
+        //}
     }
 
     //Получение результата с окна
