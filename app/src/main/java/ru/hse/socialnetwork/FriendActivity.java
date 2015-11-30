@@ -1,4 +1,4 @@
-package ru.hse.socialnetwork;
+﻿package ru.hse.socialnetwork;
 
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;

@@ -1,4 +1,4 @@
-package ru.hse.socialnetwork;
+п»їpackage ru.hse.socialnetwork;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -31,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText chatText;
     private Button buttonSend;
 
-    // устройство друга
+    // СѓСЃС‚СЂРѕР№СЃС‚РІРѕ РґСЂСѓРіР°
     private BluetoothDevice device;
 
     Intent intent;
@@ -46,22 +46,22 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         String name = intent.getStringExtra("name");
-        // достаём девайс из Интента
+        // РґРѕСЃС‚Р°С‘Рј РґРµРІР°Р№СЃ РёР· РРЅС‚РµРЅС‚Р°
         device = intent.getParcelableExtra("device");
         Log.i("ChatActivity", device.toString());
 
-        // код был в примере
+        // РєРѕРґ Р±С‹Р» РІ РїСЂРёРјРµСЂРµ
         ParcelUuid[] uuids = device.getUuids();
 
         try {
-            // инициализируем сокет
+            // РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЃРѕРєРµС‚
             BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[0].getUuid());
-            // конектимся к сокету
+            // РєРѕРЅРµРєС‚РёРјСЃСЏ Рє СЃРѕРєРµС‚Сѓ
             socket.connect();
-            // создаём потоки входа и выхода в сокет
+            // СЃРѕР·РґР°С‘Рј РїРѕС‚РѕРєРё РІС…РѕРґР° Рё РІС‹С…РѕРґР° РІ СЃРѕРєРµС‚
             outputStream = socket.getOutputStream();
             inStream = socket.getInputStream();
-            // запускаем зацикленный метод чтения из сокета (в потоке)
+            // Р·Р°РїСѓСЃРєР°РµРј Р·Р°С†РёРєР»РµРЅРЅС‹Р№ РјРµС‚РѕРґ С‡С‚РµРЅРёСЏ РёР· СЃРѕРєРµС‚Р° (РІ РїРѕС‚РѕРєРµ)
             Read();
         }catch (Exception ex){
 
@@ -117,15 +117,15 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    // Запись в сокет. ЗДЕСЬ ПРОИСХОДИТ ОШИБКА
+    // Р—Р°РїРёСЃСЊ РІ СЃРѕРєРµС‚. Р—Р”Р•РЎР¬ РџР РћРРЎРҐРћР”РРў РћРЁРР‘РљРђ
     public void write(String s) throws IOException {
         Log.i("write(String s)", s);
         outputStream.write(s.getBytes());
     }
 
-    // чтение из сокета
-    // записи в активити пока нет
-    // смотреть в логах
+    // С‡С‚РµРЅРёРµ РёР· СЃРѕРєРµС‚Р°
+    // Р·Р°РїРёСЃРё РІ Р°РєС‚РёРІРёС‚Рё РїРѕРєР° РЅРµС‚
+    // СЃРјРѕС‚СЂРµС‚СЊ РІ Р»РѕРіР°С…
     public void Read() {
         new Thread(new Runnable() {
 
@@ -150,7 +150,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private boolean sendChatMessage() throws IOException {
         chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
-        // пишем строку при клике
+        // РїРёС€РµРј СЃС‚СЂРѕРєСѓ РїСЂРё РєР»РёРєРµ
         write(chatText.getText().toString());
         chatText.setText("");
         side = !side;
