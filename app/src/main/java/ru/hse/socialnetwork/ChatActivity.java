@@ -1,10 +1,12 @@
-﻿package ru.hse.socialnetwork;
+package ru.hse.socialnetwork;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,21 +17,21 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
-    private OutputStream outputStream;
-    private InputStream inStream;
 
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
+    private AcceptThread server;
+    private ConnectThread client;
+    private String type;
+    Handler handler;
 
     // устройство друга
     private BluetoothDevice device;
@@ -38,42 +40,38 @@ public class ChatActivity extends AppCompatActivity {
     private boolean side = false;
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(type.contains("server"))
+            server.cancel();
+        else
+            if(type.contains("client"))
+                client.cancel();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         setContentView(R.layout.chat);
 
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                String data = bundle.getString("Key");
+                chatArrayAdapter.add(new ChatMessage(!side, data));
+            }
+        };
+
         Intent intent = getIntent();
 
-        String name = intent.getStringExtra("name");
-        // достаём девайс из Интента
-        device = intent.getParcelableExtra("device");
-        Log.i("ChatActivity", device.toString());
-
-        // код был в примере
-        ParcelUuid[] uuids = device.getUuids();
-
-        try {
-            // инициализируем сокет
-            BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[0].getUuid());
-            // конектимся к сокету
-            socket.connect();
-            // создаём потоки входа и выхода в сокет
-            outputStream = socket.getOutputStream();
-            inStream = socket.getInputStream();
-            // запускаем зацикленный метод чтения из сокета (в потоке)
-            Read();
-        }catch (Exception ex){
-
-        }
+        type = intent.getStringExtra("type");
 
         getSupportActionBar().setIcon(R.drawable.bluetooth_ic);
-        getSupportActionBar().setTitle(name);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         buttonSend = (Button) findViewById(R.id.buttonSend);
-
         listView = (ListView) findViewById(R.id.listView1);
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.singlemessage);
@@ -115,45 +113,54 @@ public class ChatActivity extends AppCompatActivity {
                 listView.setSelection(chatArrayAdapter.getCount() - 1);
             }
         });
-    }
 
-    // Запись в сокет. ЗДЕСЬ ПРОИСХОДИТ ОШИБКА
-    public void write(String s) throws IOException {
-        Log.i("write(String s)", s);
-        outputStream.write(s.getBytes());
-    }
+        if(type.contains("client")) {
 
-    // чтение из сокета
-    // записи в активити пока нет
-    // смотреть в логах
-    public void Read() {
-        new Thread(new Runnable() {
+            Log.d(TAG,"client");
+            String name = intent.getStringExtra("name");
+            device = intent.getParcelableExtra("device");
+            Log.i("ChatActivity", device.toString());
 
-            @Override
-            public void run() {
-                final int BUFFER_SIZE = 1024;
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int bytes = 0;
-                int b = BUFFER_SIZE;
+            getSupportActionBar().setTitle(name);
 
-                while (true) {
-                    try {
-                        bytes = inStream.read(buffer, bytes, BUFFER_SIZE - bytes);
-                        Log.i("READ: ", new String(buffer));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            client = new ConnectThread(device, handler);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    Log.d(TAG,"run server");
+                    client.run();
                 }
-            }
-        }).start();
+            }).start();
+        }
+
+        if(type.contains("server")){
+            Log.d(TAG,"server");
+            getSupportActionBar().setTitle("Server");
+
+            server = new AcceptThread(handler);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    Log.d(TAG,"run server");
+                    server.run();
+                }
+            }).start();
+        }
     }
+
+
 
     private boolean sendChatMessage() throws IOException {
         chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
-        // пишем строку при клике
-        write(chatText.getText().toString());
+        if(type.contains("server")) {
+            server.write(chatText.getText().toString().getBytes());
+        } else {
+            if (type.contains("client")) {
+                client.write(chatText.getText().toString().getBytes());
+            }
+        }
         chatText.setText("");
-        side = !side;
+        //side = !side;
         return true;
     }
 

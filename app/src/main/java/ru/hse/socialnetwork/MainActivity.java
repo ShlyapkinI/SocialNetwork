@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.refresh:
+                Intent serverintent = new Intent(getApplicationContext(), ChatActivity.class);
+                serverintent.putExtra("type", "server");
+                serverintent.putExtra("device", "server");
+                startActivity(serverintent);
                 break;
             default:
                 break;

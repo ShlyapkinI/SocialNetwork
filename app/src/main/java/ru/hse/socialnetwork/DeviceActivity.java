@@ -1,4 +1,4 @@
-﻿package ru.hse.socialnetwork;
+package ru.hse.socialnetwork;
 
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -78,6 +78,7 @@ public class DeviceActivity extends ListActivity {
         // Если девайс пейренный
         if (pairDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
             Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            intent.putExtra("type", "client");
             intent.putExtra("name", name);
             intent.putExtra("device", pairDevice);
             startActivity(intent);

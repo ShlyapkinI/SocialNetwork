@@ -1,4 +1,4 @@
-﻿package ru.hse.socialnetwork;
+package ru.hse.socialnetwork;
 
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -65,6 +65,7 @@ public class FriendActivity extends ListActivity {
         BluetoothDevice pairDevice = GetKey(bondedDevices, name);
 
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra("type", "client");
         intent.putExtra("name", name);
         // передаём девайс в ChatActivity
         intent.putExtra("device", pairDevice);
