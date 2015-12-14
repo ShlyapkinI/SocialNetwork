@@ -80,7 +80,19 @@ public class AcceptThread extends Thread{
                     e.printStackTrace();
                 }
 
+                Message msg = h.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putString("Start", "Start");
+                msg.setData(bundle);
+                h.sendMessage(msg);
+
                 read();
+
+                Message msg1 = h.obtainMessage();
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("Stop", "Stop");
+                msg1.setData(bundle);
+                h.sendMessage(msg);
                 break;
             }
         }

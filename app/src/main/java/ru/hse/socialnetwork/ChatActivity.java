@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -47,6 +49,7 @@ public class ChatActivity extends AppCompatActivity {
         else
             if(type.contains("client"))
                 client.cancel();
+        finish();
     }
 
     @Override
@@ -60,7 +63,38 @@ public class ChatActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
                 String data = bundle.getString("Key");
-                chatArrayAdapter.add(new ChatMessage(!side, data));
+                String toserver = bundle.getString("ToServer");
+                String start = bundle.getString("Start");
+                String stop = bundle.getString("Stop");
+
+                if(toserver!=null) {
+                    Log.d(TAG, "server");
+                    //getSupportActionBar().setTitle("Server");
+                    type = "server";
+
+                    server = new AcceptThread(handler);
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            Log.d(TAG,"run server");
+                            Looper.prepare();
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    "Ожидаем подключение...", Toast.LENGTH_SHORT);
+                            toast.show();
+                            server.run();
+                        }
+                    }).start();
+                }
+                if(data!=null){
+                    chatArrayAdapter.add(new ChatMessage(!side, data));
+                }
+                if(start!=null){
+                    buttonSend.setVisibility(View.VISIBLE);
+                    chatText.setVisibility(View.VISIBLE);
+                }
+                if(stop!=null){
+                    finish();
+                }
             }
         };
 
@@ -72,12 +106,14 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         buttonSend = (Button) findViewById(R.id.buttonSend);
+        buttonSend.setVisibility(View.GONE);
         listView = (ListView) findViewById(R.id.listView1);
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.singlemessage);
         listView.setAdapter(chatArrayAdapter);
 
         chatText = (EditText) findViewById(R.id.chatText);
+        chatText.setVisibility(View.GONE);
         chatText.setOnKeyListener(new OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -114,7 +150,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        if(type.contains("client")) {
+        //if(type.contains("client")) {
 
             Log.d(TAG,"client");
             String name = intent.getStringExtra("name");
@@ -127,11 +163,11 @@ public class ChatActivity extends AppCompatActivity {
 
             new Thread(new Runnable() {
                 public void run() {
-                    Log.d(TAG,"run server");
+                    Log.d(TAG,"run client");
                     client.run();
                 }
             }).start();
-        }
+        //}
 
         if(type.contains("server")){
             Log.d(TAG,"server");

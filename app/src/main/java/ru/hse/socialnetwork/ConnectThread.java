@@ -60,6 +60,12 @@ public class ConnectThread extends Thread{
                 Log.d(TAG, "mmSocket.close();");
                 mmSocket.close();
             } catch(IOException closeException){}
+
+            Message msg = h.obtainMessage();
+            Bundle bundle = new Bundle();
+            bundle.putString("ToServer", "ToServer");
+            msg.setData(bundle);
+            h.sendMessage(msg);
             return;
         }
 
@@ -79,7 +85,19 @@ public class ConnectThread extends Thread{
         mmOutStream = tmpOut;
 // управлчем соединением (в отдельном потоке)
         //manageConnectedSocket(mmSocket);
+        Message msg = h.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("Start", "Start");
+        msg.setData(bundle);
+        h.sendMessage(msg);
+
         read();
+
+        Message msg1 = h.obtainMessage();
+        Bundle bundle1 = new Bundle();
+        bundle1.putString("Stop", "Stop");
+        msg1.setData(bundle);
+        h.sendMessage(msg);
     }
 
     /* Вызываем этот метод из главной деятельности, чтобы отправить данные
