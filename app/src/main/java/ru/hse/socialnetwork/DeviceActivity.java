@@ -43,6 +43,9 @@ public class DeviceActivity extends ListActivity {
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if(device.getName()==null){
+                        return;
+                    }
                     if (!discoveredDevices.containsKey(device.getAddress()) && device.getName().startsWith("@"))
                     {
                         discoveredDevices.put(device, device.getName().substring(LABEL));
@@ -78,8 +81,6 @@ public class DeviceActivity extends ListActivity {
         // Если девайс пейренный
         if (pairDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
             Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-            intent.putExtra("type", "client");
-            intent.putExtra("name", name);
             intent.putExtra("device", pairDevice);
             startActivity(intent);
         } else {

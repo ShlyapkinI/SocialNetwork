@@ -1,16 +1,15 @@
 package ru.hse.socialnetwork;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -18,10 +17,10 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
+
+import ru.hse.socialnetwork.service.ServerService;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
@@ -30,61 +29,58 @@ public class ChatActivity extends AppCompatActivity {
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
-    private AcceptThread server;
     private ConnectThread client;
-    private String type;
     Handler handler;
+    MyReceiver myReceiver;
+
+    private class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+
+            String data = arg1.getStringExtra("Data");
+            BluetoothDevice bd= arg1.getParcelableExtra("Device");
+
+            if(device.equals(bd)){
+                chatArrayAdapter.add(new ChatMessage(!side, data));
+            }
+        }
+
+    }
 
     // устройство друга
     private BluetoothDevice device;
 
-    Intent intent;
     private boolean side = false;
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if(type.contains("server"))
-            server.cancel();
-        else
-            if(type.contains("client"))
-                client.cancel();
-        finish();
+    protected void onDestroy() {
+        client.cancel();
+        super.onDestroy();
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent i = getIntent();
         setContentView(R.layout.chat);
+
+        //Register BroadcastReceiver
+        //to receive event from our service
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ServerService.MY_ACTION);
+        registerReceiver(myReceiver, intentFilter);
 
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
-                String data = bundle.getString("Key");
-                String toserver = bundle.getString("ToServer");
+                String data = bundle.getString("Read");
                 String start = bundle.getString("Start");
                 String stop = bundle.getString("Stop");
 
-                if(toserver!=null) {
-                    Log.d(TAG, "server");
-                    //getSupportActionBar().setTitle("Server");
-                    type = "server";
-
-                    server = new AcceptThread(handler);
-
-                    new Thread(new Runnable() {
-                        public void run() {
-                            Log.d(TAG,"run server");
-                            Looper.prepare();
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    "Ожидаем подключение...", Toast.LENGTH_SHORT);
-                            toast.show();
-                            server.run();
-                        }
-                    }).start();
-                }
                 if(data!=null){
                     chatArrayAdapter.add(new ChatMessage(!side, data));
                 }
@@ -99,8 +95,6 @@ public class ChatActivity extends AppCompatActivity {
         };
 
         Intent intent = getIntent();
-
-        type = intent.getStringExtra("type");
 
         getSupportActionBar().setIcon(R.drawable.bluetooth_ic);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -150,53 +144,24 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        //if(type.contains("client")) {
 
-            Log.d(TAG,"client");
-            String name = intent.getStringExtra("name");
-            device = intent.getParcelableExtra("device");
-            Log.i("ChatActivity", device.toString());
+        device = intent.getParcelableExtra("device");
 
-            getSupportActionBar().setTitle(name);
+        getSupportActionBar().setTitle(" " + device.getName().substring(1));
 
-            client = new ConnectThread(device, handler);
+        client = new ConnectThread(device, handler);
 
-            new Thread(new Runnable() {
-                public void run() {
-                    Log.d(TAG,"run client");
-                    client.run();
-                }
-            }).start();
-        //}
-
-        if(type.contains("server")){
-            Log.d(TAG,"server");
-            getSupportActionBar().setTitle("Server");
-
-            server = new AcceptThread(handler);
-
-            new Thread(new Runnable() {
-                public void run() {
-                    Log.d(TAG,"run server");
-                    server.run();
-                }
-            }).start();
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                client.run();
+            }
+        }).start();
     }
-
-
 
     private boolean sendChatMessage() throws IOException {
         chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
-        if(type.contains("server")) {
-            server.write(chatText.getText().toString().getBytes());
-        } else {
-            if (type.contains("client")) {
-                client.write(chatText.getText().toString().getBytes());
-            }
-        }
+        client.write(chatText.getText().toString().getBytes());
         chatText.setText("");
-        //side = !side;
         return true;
     }
 

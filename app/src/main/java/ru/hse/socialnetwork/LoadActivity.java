@@ -1,14 +1,26 @@
 package ru.hse.socialnetwork;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
+
+import ru.hse.socialnetwork.service.ServerService;
 
 public class LoadActivity extends AppCompatActivity {
     public static final int REQUEST_DISCOVERABLE_CODE = 1;
     BluetoothAdapter bluetooth;
+    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +40,9 @@ public class LoadActivity extends AppCompatActivity {
 
         // установка видимости устройства
         ensureDiscoverable();
+
+        // запускаем сервис
+        startService(new Intent(this, ServerService.class));
 
     }
     // если устройство не видимо, то делаем его видимым при старте

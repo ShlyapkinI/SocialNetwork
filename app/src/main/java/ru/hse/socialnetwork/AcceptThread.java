@@ -5,6 +5,7 @@ package ru.hse.socialnetwork;
  */
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
@@ -59,7 +60,6 @@ public class AcceptThread extends Thread{
             if(socket!=null){
                 Log.d(TAG,"socket!=null");
 // управлчем соединением (в отдельном потоке)
-
                 InputStream tmpIn = null;
                 OutputStream tmpOut = null;
 
@@ -72,28 +72,16 @@ public class AcceptThread extends Thread{
 
                 mmInStream = tmpIn;
                 mmOutStream = tmpOut;
-                //manageConnectedSocket(socket);
-                try {
-                    Log.d(TAG,"mmServerSocket.close();");
-                    mmServerSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
-                Message msg = h.obtainMessage();
-                Bundle bundle = new Bundle();
-                bundle.putString("Start", "Start");
-                msg.setData(bundle);
-                h.sendMessage(msg);
+//                try {
+//                    Log.d(TAG,"mmServerSocket.close();");
+//                    mmServerSocket.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
 
-                read();
+                read(socket.getRemoteDevice());
 
-                Message msg1 = h.obtainMessage();
-                Bundle bundle1 = new Bundle();
-                bundle1.putString("Stop", "Stop");
-                msg1.setData(bundle);
-                h.sendMessage(msg);
-                break;
             }
         }
     }
@@ -108,7 +96,7 @@ public class AcceptThread extends Thread{
         }
     }
 
-    public void read() {
+    public void read(BluetoothDevice device) {
         byte[] buffer = new byte[1024];// буферный массив
         int bytes;// bytes returned from read()
 
@@ -123,15 +111,15 @@ public class AcceptThread extends Thread{
                     b[i]=buffer[i];
                 }
                 String value = new String(b);
-                Log.d(TAG+" get - ", value);
+                Log.d(TAG+" read: ", value);
 
                 Message msg = h.obtainMessage();
                 Bundle bundle = new Bundle();
-                bundle.putString("Key", value);
+
+                bundle.putParcelable("Device",device);
+                bundle.putString("Read",value);
                 msg.setData(bundle);
                 h.sendMessage(msg);
-// посылаем прочитанные байты главной деятельности
-                //mHandler.obtainMessage(MESSAGE_READ, bytes,-1, buffer).sendToTarget();
             } catch (IOException e) {
                 e.printStackTrace();
                 break;

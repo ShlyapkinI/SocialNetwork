@@ -63,13 +63,12 @@ public class ConnectThread extends Thread{
 
             Message msg = h.obtainMessage();
             Bundle bundle = new Bundle();
-            bundle.putString("ToServer", "ToServer");
+            bundle.putString("Stop", "Stop");
             msg.setData(bundle);
             h.sendMessage(msg);
             return;
         }
 
-        Log.d(TAG, "needmanage;");
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
@@ -92,12 +91,7 @@ public class ConnectThread extends Thread{
         h.sendMessage(msg);
 
         read();
-
-        Message msg1 = h.obtainMessage();
-        Bundle bundle1 = new Bundle();
-        bundle1.putString("Stop", "Stop");
-        msg1.setData(bundle);
-        h.sendMessage(msg);
+        cancel();
     }
 
     /* Вызываем этот метод из главной деятельности, чтобы отправить данные
@@ -124,6 +118,7 @@ public class ConnectThread extends Thread{
                 for(int i = 0; i<bytes; i++){
                     b[i]=buffer[i];
                 }
+
                 String value = new String(b);
                 Log.d(TAG+" get - ", value);
 
@@ -139,7 +134,6 @@ public class ConnectThread extends Thread{
                 break;
             }
         }
-        Log.d(TAG, "break;");
     }
 
     /** отмена ожидания сокета */
