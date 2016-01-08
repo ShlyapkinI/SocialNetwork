@@ -12,13 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatArrayAdapter extends ArrayAdapter {
 
     private TextView chatText;
     private List chatMessageList = new ArrayList();
     private LinearLayout singleMessageContainer;
+    private ArrayList<Message> s;
 
     public void add(ChatMessage object) {
         chatMessageList.add(object);

@@ -162,6 +162,7 @@ public class ChatActivity extends AppCompatActivity {
         chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
         client.write(chatText.getText().toString().getBytes());
         chatText.setText("");
+        WorkWithMessages a = new WorkWithMessages(this);
         return true;
     }
 
