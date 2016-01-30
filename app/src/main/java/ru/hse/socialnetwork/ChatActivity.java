@@ -19,6 +19,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.util.ArrayList;
 
 import ru.hse.socialnetwork.service.ServerService;
 
@@ -32,6 +34,7 @@ public class ChatActivity extends AppCompatActivity {
     private ConnectThread client;
     Handler handler;
     MyReceiver myReceiver;
+    WorkWithMessages wwm;
 
     private class MyReceiver extends BroadcastReceiver {
 
@@ -65,6 +68,18 @@ public class ChatActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat);
+        Intent intent = getIntent();
+        device = intent.getParcelableExtra("device");
+
+        wwm = new WorkWithMessages(this);
+        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.singlemessage);
+
+        ArrayList<ru.hse.socialnetwork.Message> messages = wwm.loadMessages(device.getAddress().toString());
+
+        for(ru.hse.socialnetwork.Message msg:messages){
+            if(!(msg.getTextOfMessage().contentEquals("")))
+                chatArrayAdapter.add(new ChatMessage(!msg.getFlag(), msg.getTextOfMessage()));
+        }
 
         //Register BroadcastReceiver
         //to receive event from our service
@@ -94,8 +109,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
 
-        Intent intent = getIntent();
-
         getSupportActionBar().setIcon(R.drawable.bluetooth_ic);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -103,7 +116,6 @@ public class ChatActivity extends AppCompatActivity {
         buttonSend.setVisibility(View.GONE);
         listView = (ListView) findViewById(R.id.listView1);
 
-        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.singlemessage);
         listView.setAdapter(chatArrayAdapter);
 
         chatText = (EditText) findViewById(R.id.chatText);
@@ -144,9 +156,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
-        device = intent.getParcelableExtra("device");
-
         getSupportActionBar().setTitle(" " + device.getName().substring(1));
 
         client = new ConnectThread(device, handler);
@@ -161,6 +170,7 @@ public class ChatActivity extends AppCompatActivity {
     private boolean sendChatMessage() throws IOException {
         chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
         client.write(chatText.getText().toString().getBytes());
+        wwm.saveMessage(device.getAddress().toString(), chatText.getText().toString(), new Date(System.currentTimeMillis()), true);
         chatText.setText("");
         return true;
     }

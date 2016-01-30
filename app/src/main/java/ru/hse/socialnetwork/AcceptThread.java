@@ -52,7 +52,7 @@ public class AcceptThread extends Thread{
             try{
                 Log.d(TAG,"mmServerSocket.accept();");
                 socket= mmServerSocket.accept();
-            } catch(IOException e){
+            } catch(Exception e){
                 e.printStackTrace();
                 break;
             }

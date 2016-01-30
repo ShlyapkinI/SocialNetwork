@@ -17,11 +17,13 @@ import android.os.Message;
 import android.provider.SyncStateContract;
 import android.support.v7.app.NotificationCompat;
 
+import java.sql.Date;
 import java.util.concurrent.TimeUnit;
 
 import ru.hse.socialnetwork.AcceptThread;
 import ru.hse.socialnetwork.ChatActivity;
 import ru.hse.socialnetwork.R;
+import ru.hse.socialnetwork.WorkWithMessages;
 
 public class ServerService extends Service {
 
@@ -30,8 +32,11 @@ public class ServerService extends Service {
     private static final int notificationID = 12;
     private AcceptThread server;
     public final static String MY_ACTION = "MY_ACTION";
+    WorkWithMessages wwm;
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        wwm = new WorkWithMessages(context);
 
         // создаём Handler
         handler = new Handler() {
@@ -46,6 +51,8 @@ public class ServerService extends Service {
                 intent.putExtra("Data", data);
                 intent.putExtra("Device", device);
                 sendBroadcast(intent);
+
+                wwm.saveMessage(device.getAddress().toString(), data, new Date(System.currentTimeMillis()),false);
 
                 NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Intent notificationIntent = new Intent(context, ChatActivity.class);
@@ -62,8 +69,8 @@ public class ServerService extends Service {
                         .setTicker(context.getString(R.string.TickerNotify)).setWhen(System.currentTimeMillis())
                         .setContentIntent(contentIntent)
                         .setSound(alarmSound)
-                        .setAutoCancel(true)
-                        .setVibrate(pattern);
+                        .setAutoCancel(true);
+                        //.setVibrate(pattern);
                 nm.notify(notificationID, notificationBuilder.build());
             }
         };
