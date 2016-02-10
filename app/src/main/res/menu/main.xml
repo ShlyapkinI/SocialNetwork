@@ -5,13 +5,13 @@
 
     <item
         android:id="@+id/refresh"
-        android:icon="@android:drawable/ic_popup_sync"
+        android:icon="@drawable/refresh"
         you:showAsAction="always"
         android:title="@string/refresh">
     </item>
     <item
         android:id="@+id/settings"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/settings"
         you:showAsAction="always"
         android:title="@string/settings">
     </item>

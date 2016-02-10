@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.lang.reflect.Method;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class DeviceActivity extends ListActivity {
 
@@ -38,6 +40,7 @@ public class DeviceActivity extends ListActivity {
         bReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.d("DeviceActivity", "onReceive;");
                 String action = intent.getAction();
 
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {

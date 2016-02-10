@@ -45,26 +45,7 @@ public class MyArrayAdapter extends ArrayAdapter<String> {
         }
 
         holder.textView.setText(names[position]);
-        // Изменение иконки для Windows и iPhone
-        String s = names[position];
-        switch(names[position])
-        {
-            case "Ilya":
-                holder.imageView.setImageResource(R.drawable.ilya);
-                break;
-            case "Polly":
-                holder.imageView.setImageResource(R.drawable.polly);
-                break;
-            case "Anton":
-                holder.imageView.setImageResource(R.drawable.anton);
-                break;
-            case "Ksenia":
-                holder.imageView.setImageResource(R.drawable.ksenia);
-                break;
-            default:
-                holder.imageView.setImageResource(R.drawable.andr);
-                break;
-        }
+        holder.imageView.setImageResource(R.drawable.andr);
         return rowView;
     }
 }

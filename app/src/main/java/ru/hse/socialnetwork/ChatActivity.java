@@ -17,6 +17,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -46,7 +47,7 @@ public class ChatActivity extends AppCompatActivity {
             BluetoothDevice bd= arg1.getParcelableExtra("Device");
 
             if(device.equals(bd)){
-                chatArrayAdapter.add(new ChatMessage(!side, data));
+                chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
             }
         }
 
@@ -78,7 +79,7 @@ public class ChatActivity extends AppCompatActivity {
 
         for(ru.hse.socialnetwork.Message msg:messages){
             if(!(msg.getTextOfMessage().contentEquals("")))
-                chatArrayAdapter.add(new ChatMessage(!msg.getFlag(), msg.getTextOfMessage()));
+                chatArrayAdapter.add(new ChatMessage(!msg.getFlag(), msg.getTextOfMessage(), msg.getDateAndTime()));
         }
 
         //Register BroadcastReceiver
@@ -97,14 +98,17 @@ public class ChatActivity extends AppCompatActivity {
                 String stop = bundle.getString("Stop");
 
                 if(data!=null){
-                    chatArrayAdapter.add(new ChatMessage(!side, data));
+                    chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
                 }
                 if(start!=null){
                     buttonSend.setVisibility(View.VISIBLE);
                     chatText.setVisibility(View.VISIBLE);
+                    Toast toast = Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.Connect_ok), Toast.LENGTH_SHORT);
+                    toast.show();
                 }
                 if(stop!=null){
-                    finish();
+                    Toast toast = Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.Connect_fall), Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         };
@@ -168,7 +172,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private boolean sendChatMessage() throws IOException {
-        chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
+        chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString(), new java.util.Date()));
         client.write(chatText.getText().toString().getBytes());
         wwm.saveMessage(device.getAddress().toString(), chatText.getText().toString(), new Date(System.currentTimeMillis()), true);
         chatText.setText("");

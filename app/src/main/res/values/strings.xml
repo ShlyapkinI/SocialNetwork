@@ -6,9 +6,8 @@
     <string name="save">Save</string>
     <string name="revert">Revert</string>
 
-    <color name="blue_color">#004DFF</color>
-    <color name="black_color">#000000</color>
-    <color name="white_color">#FFFFFF</color>
+    <string name="send">Отправить</string>
+
     <string name="title_activity_main">MainActivity</string>
 
     <string name="hello_world">Hello world!</string>
@@ -20,5 +19,8 @@
 
     <string name="TitleNotify">Отправитель: </string>
     <string name="TickerNotify">Новое сообщение!</string>
+
+    <string name="Connect_ok">Соединение успешно!\nТеперь можно отправлять сообщения!</string>
+    <string name="Connect_fall">Соединение не установлено\nВозможно, собеседник не в сети...</string>
 
 </resources>

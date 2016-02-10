@@ -13,9 +13,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="5dip"
-            android:background="@drawable/bubble_b"
-            android:paddingLeft="10dip"
+            android:layout_margin="10dp"
+            android:paddingBottom="35dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="25dp"
+            android:background="@drawable/bubble_a"
             android:text="Hello bubbles!"
             android:textColor="@android:color/white" />
     </LinearLayout>

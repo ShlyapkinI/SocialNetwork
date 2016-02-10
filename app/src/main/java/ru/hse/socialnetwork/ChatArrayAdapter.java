@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,6 @@ public class ChatArrayAdapter extends ArrayAdapter {
     private TextView chatText;
     private List chatMessageList = new ArrayList();
     private LinearLayout singleMessageContainer;
-    private ArrayList<Message> s;
 
     public void add(ChatMessage object) {
         chatMessageList.add(object);
@@ -49,8 +50,9 @@ public class ChatArrayAdapter extends ArrayAdapter {
         singleMessageContainer = (LinearLayout) row.findViewById(R.id.singleMessageContainer);
         ChatMessage chatMessageObj = getItem(position);
         chatText = (TextView) row.findViewById(R.id.singleMessage);
-        chatText.setText(chatMessageObj.message);
+        chatText.setText(chatMessageObj.message + "\n\n" + new SimpleDateFormat("dd.MM.yyy\nHH:mm:ss").format(chatMessageObj.date));
         chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.bubble_a : R.drawable.bubble_b);
+        chatText.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
         singleMessageContainer.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
         return row;
     }

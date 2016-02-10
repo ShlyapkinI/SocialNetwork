@@ -33,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         ImageView photoImage = (ImageView)findViewById(R.id.photoImage);
         nameEdit   = (EditText)findViewById(R.id.nameEdit);
 
-        photoImage.setImageResource(R.drawable.ivan);
+        photoImage.setImageResource(R.drawable.andr);
         // Выводим текущее имя устройства, удаляя метку приложения
         nameEdit.setText(bluetooth.getName().substring(LABEL));
     }

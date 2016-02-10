@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.HashMap;
@@ -48,6 +50,7 @@ public class FriendActivity extends ListActivity {
 
             if (device.getName().startsWith("@"))
             {
+                Log.d("FriendActivity", "nobody.setVisibility(View.GONE);");
                 bondedDevices.put(device, device.getName().substring(LABEL));
             }
         }
