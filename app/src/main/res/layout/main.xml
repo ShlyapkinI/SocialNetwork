@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/main_color"
+    android:background="@color/black_color"
     android:orientation="vertical">
 
     <TabHost
@@ -16,7 +16,7 @@
             android:orientation="vertical">
             <TabWidget
                 android:id="@android:id/tabs"
-                android:background="@color/orange_light_color"
+                android:background="@color/blue_light_color"
                 android:textColor="@color/white_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

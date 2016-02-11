@@ -6,7 +6,7 @@
     <!-- ActionBar styles -->
     <style name="Widget.Styled.ActionBar"
         parent="@style/Theme.AppCompat.Light">
-        <item name="background">@color/orange_color</item>
+        <item name="background">@color/blue_color</item>
         <item name="android:actionBarItemBackground">@color/white_color</item>
         <item name="titleTextStyle">@style/MyActionBarTitleText</item>
 
