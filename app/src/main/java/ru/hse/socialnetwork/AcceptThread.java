@@ -115,7 +115,6 @@ public class AcceptThread extends Thread{
 
                 Message msg = h.obtainMessage();
                 Bundle bundle = new Bundle();
-
                 bundle.putParcelable("Device",device);
                 bundle.putString("Read",value);
                 msg.setData(bundle);

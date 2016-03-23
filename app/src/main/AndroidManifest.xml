@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_BLUETOOTH_SHARE"/>
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -47,11 +49,23 @@
             android:screenOrientation="userPortrait" >
         </activity>
 
+        <activity
+            android:name=".qr.BarcodeReader"
+            android:label="@string/title_activity_chat"
+            android:screenOrientation="landscape">
+        </activity>
+
         <service
             android:name=".service.ServerService"
             android:enabled="true"
             android:exported="true" >
         </service>
+		
+		<receiver android:name=".service.ServiceReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

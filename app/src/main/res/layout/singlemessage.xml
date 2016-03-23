@@ -6,21 +6,26 @@
     <LinearLayout
         android:id="@+id/singleMessageContainer"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
         <TextView
             android:id="@+id/singleMessage"
-            android:layout_width="wrap_content"
+            android:layout_width="164dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:paddingBottom="35dp"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:paddingTop="25dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:paddingTop="10dp"
+			android:autoLink="all"
+            android:textColorLink="@android:color/holo_red_light"
+            android:linksClickable="true"
             android:background="@drawable/bubble_a"
             android:text="Hello bubbles!"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:layout_weight="0.35" />
     </LinearLayout>
 
 </LinearLayout>

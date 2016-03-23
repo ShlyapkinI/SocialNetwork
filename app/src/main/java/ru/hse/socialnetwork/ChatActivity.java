@@ -10,7 +10,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.AbsListView;
@@ -23,6 +27,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import ru.hse.socialnetwork.qr.BarcodeReader;
 import ru.hse.socialnetwork.service.ServerService;
 
 public class ChatActivity extends AppCompatActivity {
@@ -33,7 +38,9 @@ public class ChatActivity extends AppCompatActivity {
     private EditText chatText;
     private Button buttonSend;
     private ConnectThread client;
+	private static String resultFromQR;
     Handler handler;
+    public static String start_write = "b,],p{avsf_4oGFY+{2x";
     MyReceiver myReceiver;
     WorkWithMessages wwm;
 
@@ -45,8 +52,17 @@ public class ChatActivity extends AppCompatActivity {
 
             String data = arg1.getStringExtra("Data");
             BluetoothDevice bd= arg1.getParcelableExtra("Device");
+            if(data!=null){
+                if(data.contentEquals(ChatActivity.start_write)){
+                    //animation here
+                    Log.d(TAG, "massege");
+                    return;
+
+                }
+            }
 
             if(device.equals(bd)){
+                Log.d(TAG, "massege111");
                 chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
             }
         }
@@ -63,6 +79,15 @@ public class ChatActivity extends AppCompatActivity {
         client.cancel();
         super.onDestroy();
     }
+	
+	@Override
+    protected void onResume(){
+        super.onResume();
+        if(resultFromQR!=null){
+            chatText.setText(resultFromQR);
+            resultFromQR=null;
+        }
+    }
 
 
     @Override
@@ -73,7 +98,7 @@ public class ChatActivity extends AppCompatActivity {
         device = intent.getParcelableExtra("device");
 
         wwm = new WorkWithMessages(this);
-        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.singlemessage);
+        chatArrayAdapter = new ChatArrayAdapter(this, R.layout.singlemessage);
 
         ArrayList<ru.hse.socialnetwork.Message> messages = wwm.loadMessages(device.getAddress().toString());
 
@@ -87,6 +112,7 @@ public class ChatActivity extends AppCompatActivity {
         myReceiver = new MyReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServerService.MY_ACTION);
+
         registerReceiver(myReceiver, intentFilter);
 
         handler = new Handler(){
@@ -98,11 +124,16 @@ public class ChatActivity extends AppCompatActivity {
                 String stop = bundle.getString("Stop");
 
                 if(data!=null){
-                    chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
+                    if(data.contentEquals(start_write)){
+                        Toast toast = Toast.makeText(getApplicationContext(), "Собеседник пишет", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }else
+                        chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
                 }
                 if(start!=null){
                     buttonSend.setVisibility(View.VISIBLE);
                     chatText.setVisibility(View.VISIBLE);
+                    chatText.requestFocus();
                     Toast toast = Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.Connect_ok), Toast.LENGTH_SHORT);
                     toast.show();
                 }
@@ -148,6 +179,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        chatText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                client.write(start_write.getBytes());
+            }
+        });
+
+
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setAdapter(chatArrayAdapter);
 
@@ -172,11 +211,41 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private boolean sendChatMessage() throws IOException {
-        chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString(), new java.util.Date()));
-        client.write(chatText.getText().toString().getBytes());
+        if(chatText.getText().toString()!=null && !chatText.getText().toString().isEmpty()
+                && !chatText.getText().toString().equals("")) {
+            chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString(), new java.util.Date()));
+            client.write(chatText.getText().toString().getBytes());
+        }
         wwm.saveMessage(device.getAddress().toString(), chatText.getText().toString(), new Date(System.currentTimeMillis()), true);
         chatText.setText("");
         return true;
     }
+	
+	 public void setTextFromResultOfQR(String result){
+        this.resultFromQR = result;
+    }
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.qr_in_chat, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.qrCode:
+                Intent qrCodeintent = new Intent(this, BarcodeReader.class);
+                startActivity(qrCodeintent);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

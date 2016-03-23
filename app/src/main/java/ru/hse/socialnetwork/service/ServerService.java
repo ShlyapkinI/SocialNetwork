@@ -16,12 +16,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.SyncStateContract;
 import android.support.v7.app.NotificationCompat;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.util.concurrent.TimeUnit;
 
 import ru.hse.socialnetwork.AcceptThread;
 import ru.hse.socialnetwork.ChatActivity;
+import ru.hse.socialnetwork.ChatMessage;
 import ru.hse.socialnetwork.R;
 import ru.hse.socialnetwork.WorkWithMessages;
 
@@ -45,6 +47,14 @@ public class ServerService extends Service {
                 Bundle bundle = msg.getData();
                 String data = bundle.getString("Read");
                 BluetoothDevice device = bundle.getParcelable("Device");
+
+                if(data!=null){
+                    if(data.contentEquals(ChatActivity.start_write)){
+                        Toast toast = Toast.makeText(getApplicationContext(), "Interlocutor " + device.getName().substring(1) + " Write message in SocialNetwork" , Toast.LENGTH_SHORT);
+                        toast.show();
+
+                    }
+                }
 
                 Intent intent = new Intent();
                 intent.setAction(MY_ACTION);

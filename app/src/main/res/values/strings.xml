@@ -23,4 +23,6 @@
     <string name="Connect_ok">Соединение успешно!\nТеперь можно отправлять сообщения!</string>
     <string name="Connect_fall">Соединение не установлено\nВозможно, собеседник не в сети...</string>
 
+    <string name="qrCode">qrCode</string>
+
 </resources>
