@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,6 +27,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -37,6 +43,7 @@ public class ChatActivity extends AppCompatActivity {
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
+    private Button buttonAdd;
     private ConnectThread client;
 	private static String resultFromQR;
     Handler handler;
@@ -52,18 +59,43 @@ public class ChatActivity extends AppCompatActivity {
 
             String data = arg1.getStringExtra("Data");
             BluetoothDevice bd= arg1.getParcelableExtra("Device");
-            if(data!=null){
-                if(data.contentEquals(ChatActivity.start_write)){
-                    //animation here
-                    Log.d(TAG, "massege");
-                    return;
+            String uri = arg1.getStringExtra("Image");
 
-                }
-            }
+
 
             if(device.equals(bd)){
-                Log.d(TAG, "massege111");
-                chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
+
+                if (uri != null){
+                    try {
+                        File imgFile = new  File(uri);
+                        if(imgFile.exists()){
+                            Bitmap myBitmap = null;
+                            try {
+                                BitmapFactory.Options options = new BitmapFactory.Options();
+                                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                                myBitmap = BitmapFactory.decodeFile(uri, options);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            chatArrayAdapter.add(new ChatMessage(!side, myBitmap));
+
+                        }else{
+                            Log.d("dfbd","dgdsb");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(data!=null) {
+                    chatArrayAdapter.add(new ChatMessage(!side, data, new java.util.Date()));
+                    if (data.contentEquals(ChatActivity.start_write)) {
+                        //animation here
+                        Log.d(TAG, "massege");
+                        return;
+
+                    }
+                }
             }
         }
 
@@ -122,6 +154,16 @@ public class ChatActivity extends AppCompatActivity {
                 String data = bundle.getString("Read");
                 String start = bundle.getString("Start");
                 String stop = bundle.getString("Stop");
+                Uri uri = bundle.getParcelable("IMAGE_URI");
+
+                if (uri != null){
+                    try {
+                        Bitmap newbitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        chatArrayAdapter.add(new ChatMessage(!side, newbitmap));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 if(data!=null){
                     if(data.contentEquals(start_write)){
@@ -132,6 +174,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 if(start!=null){
                     buttonSend.setVisibility(View.VISIBLE);
+                    buttonAdd.setVisibility(View.VISIBLE);
                     chatText.setVisibility(View.VISIBLE);
                     chatText.requestFocus();
                     Toast toast = Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.Connect_ok), Toast.LENGTH_SHORT);
@@ -149,6 +192,8 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         buttonSend = (Button) findViewById(R.id.buttonSend);
         buttonSend.setVisibility(View.GONE);
+        buttonAdd = (Button) findViewById(R.id.buttonAdd);
+        buttonAdd.setVisibility(View.GONE);
         listView = (ListView) findViewById(R.id.listView1);
 
         listView.setAdapter(chatArrayAdapter);
@@ -173,6 +218,17 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View arg0) {
                 try {
                     sendChatMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                try {
+                    addFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -219,6 +275,33 @@ public class ChatActivity extends AppCompatActivity {
         wwm.saveMessage(device.getAddress().toString(), chatText.getText().toString(), new Date(System.currentTimeMillis()), true);
         chatText.setText("");
         return true;
+    }
+
+    private void addFile() throws  IOException{
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select file"), 1);
+
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            try {
+                final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                File file = new File(uri.getPath());
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] imageByteArray = stream.toByteArray();
+                String array = "1234567890";
+                client.write(array.getBytes());
+                client.write(((Integer)imageByteArray.length).toString().getBytes());
+                client.write(imageByteArray);
+                chatArrayAdapter.add(new ChatMessage(side, bitmap));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 	
 	 public void setTextFromResultOfQR(String result){

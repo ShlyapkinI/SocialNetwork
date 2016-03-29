@@ -96,11 +96,16 @@ public class ConnectThread extends Thread{
 
     /* Вызываем этот метод из главной деятельности, чтобы отправить данные
     удаленному устройству */
-    public void write(byte[] bytes) {
+    public synchronized void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
+
+            mmOutStream.flush();
+            Thread.sleep(1000);
             Log.d(TAG, "write: " + new String(bytes));
         } catch (IOException e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

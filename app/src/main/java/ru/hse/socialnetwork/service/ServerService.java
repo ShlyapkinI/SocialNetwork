@@ -46,23 +46,26 @@ public class ServerService extends Service {
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
                 String data = bundle.getString("Read");
+                String uri = bundle.getString("IMAGE_URI");
                 BluetoothDevice device = bundle.getParcelable("Device");
 
                 if(data!=null){
                     if(data.contentEquals(ChatActivity.start_write)){
                         Toast toast = Toast.makeText(getApplicationContext(), "Interlocutor " + device.getName().substring(1) + " Write message in SocialNetwork" , Toast.LENGTH_SHORT);
                         toast.show();
-
+                        return;
+                    }else{
+                        wwm.saveMessage(device.getAddress().toString(), data, new Date(System.currentTimeMillis()),false);
                     }
                 }
 
                 Intent intent = new Intent();
                 intent.setAction(MY_ACTION);
                 intent.putExtra("Data", data);
+                intent.putExtra("Image", uri);
                 intent.putExtra("Device", device);
                 sendBroadcast(intent);
 
-                wwm.saveMessage(device.getAddress().toString(), data, new Date(System.currentTimeMillis()),false);
 
                 NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Intent notificationIntent = new Intent(context, ChatActivity.class);
@@ -95,7 +98,7 @@ public class ServerService extends Service {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             public void run() {
 
-                server = new AcceptThread(handler);
+                server = new AcceptThread(handler, getApplicationContext());
                 server.run();
 
             }

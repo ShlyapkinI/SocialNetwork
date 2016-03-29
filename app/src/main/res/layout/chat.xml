@@ -28,9 +28,19 @@
             android:id="@+id/chatText"
             android:textColor="@color/white_color"
             android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/buttonSend"
+            android:layout_toRightOf="@+id/buttonAdd"
+            android:layout_toEndOf="@+id/buttonAdd" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonAdd"
+            android:layout_weight="500"
+            android:background="@drawable/add"
+            android:layout_alignTop="@+id/buttonSend"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/buttonSend" />
+            android:layout_alignParentStart="true" />
 
         <Button
             android:layout_width="wrap_content"

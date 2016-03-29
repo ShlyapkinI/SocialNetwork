@@ -4,6 +4,7 @@
     android:layout_height="wrap_content" >
 
     <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/singleMessageContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -13,7 +14,6 @@
             android:id="@+id/singleMessage"
             android:layout_width="164dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_margin="10dp"
             android:paddingBottom="10dp"
             android:paddingLeft="40dp"
@@ -26,6 +26,12 @@
             android:text="Hello bubbles!"
             android:textColor="@android:color/white"
             android:layout_weight="0.35" />
+        <ImageView
+            android:layout_width="164dp"
+            android:layout_height="164dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background03"
+            android:id="@+id/imageView16" />
     </LinearLayout>
 
 </LinearLayout>
