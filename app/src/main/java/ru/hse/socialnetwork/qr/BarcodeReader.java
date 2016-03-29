@@ -52,7 +52,7 @@ public class BarcodeReader extends Activity {
 	@Override
     protected void onPause() {
         super.onPause();
-		mPreview.onPause();
+        mPreview.onPause();
         mCameraManager.onPause(); 
     }
 
