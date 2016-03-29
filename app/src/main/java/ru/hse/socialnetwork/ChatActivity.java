@@ -278,9 +278,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addFile() throws  IOException{
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select file"), 1);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, 1);
 
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

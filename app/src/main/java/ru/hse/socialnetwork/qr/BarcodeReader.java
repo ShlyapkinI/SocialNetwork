@@ -47,14 +47,12 @@ public class BarcodeReader extends Activity {
         mPreview.setArea(mHoverView.getHoverLeft(), mHoverView.getHoverTop(), mHoverView.getHoverAreaWidth(), display.getWidth());
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
-        
-//        getActionBar().hide();
 	}
 	
 	@Override
     protected void onPause() {
         super.onPause();
-        //mPreview.onPause();
+		mPreview.onPause();
         mCameraManager.onPause(); 
     }
 
